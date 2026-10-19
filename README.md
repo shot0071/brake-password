@@ -71,7 +71,7 @@ See `tools/emulator/README.md` for options.
 | Role | Person |
 |------|--------|
 | Firmware & security | Nazar Bohach (ST-003) — [devNazarBohach](https://github.com/devNazarBohach) |
-| Fabrication / enclosure | *(to be filled in)* |
+| Fabrication / enclosure | Mykola Malesh (ST-028) [MykolaMalesh](https://github.com/shot0071) |
 | Documentation & 7Ds | *(to be filled in)* |
 
 ---
