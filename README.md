@@ -47,7 +47,7 @@ A companion tool on a laptop measures the device's response time over the serial
 | SG90 micro servo | €2–3 |
 | LEDs, resistors, jumper wires, breadboard | €3–5 |
 | Buzzer | ~€1 |
-| **Total** | **~€12–20** |
+| **Total** | **~€25-30** |
 
 Enclosure is 3D-printed or laser-cut in the faculty FabLab.
 
