@@ -1,115 +1,112 @@
-# STHDF class template 2026-2027
+# HackLock
 
-Toto je šablóna repozitára pre predmet **Systémové myslenie v IT a digitálna
-fabrikácia** (FIIT STU). Neklonuje sa cez GitHub Classroom — každý študent si
-z nej urobí **vlastný, čistý klon bez histórie** a pracuje vo svojom repozitári.
+An educational keypad lock built on an ESP32, used to teach **side-channel security** in a hands-on way. The firmware ships in two versions — a deliberately weak one and a hardened one — so students can see, measure, and then close a real timing leak on physical hardware.
 
-## 1. Predpoklady
+Course project for **Systémové myslenie v IT a digitálna fabrikácia (STHDF)**, STU FIIT Bratislava, 2026/2027.
 
-- nainštalovaný [Git](https://git-scm.com/downloads)
-- vlastný GitHub účet
+Built on the [STHDF class template](https://github.com/06-STH-Projects/2026_sthdf_class_template) (clean clone, project history preserved).
 
-## 2. Vytvor si vlastný klon (bez histórie)
+---
 
-Klonovanie tejto šablóny normálnym `git clone` by ti do repozitára prenieslo
-aj celú jej históriu — to nechceme. Postav sa v termináli do priečinka,
-**v ktorom** má vzniknúť tvoj projekt (napr. `~/Skola/STHDF/`) — príkaz nižšie
-si `ST-042-MojeMeno` vytvorí sám ako podpriečinok. Potom spusti:
+## What it is
 
-```bash
-git clone --depth 1 https://github.com/06-STH-Projects/2026_sthdf_class_template.git ST-042-MojeMeno
-cd ST-042-MojeMeno
-rm -rf .git
-git init
-git add -A
-git commit -m "Initial commit"
+HackLock is a small box with a keypad. You type a PIN; if it is correct, a servo opens the lid and an LED turns green. The interesting part is *how* the firmware checks the PIN:
+
+- The **learning (weak) firmware** compares the entered PIN against the secret one character by character and reacts as soon as the first wrong character appears. This makes the device's response time depend on how many leading characters were correct — a classic **timing side channel**.
+- The **hardened firmware** checks the whole PIN in constant time, so the response time no longer leaks information.
+
+A companion tool on a laptop measures the device's response time over the serial link, so the two firmware versions can be compared on the same hardware. The goal is to make an invisible class of bug (a few microseconds of difference) visible and measurable, and then to show the fix working.
+
+> **Scope note:** HackLock is a teaching aid. It demonstrates a well-known vulnerability class against *our own* device and is meant for classroom and self-study use.
+
+---
+
+## Repository layout
+
+Project folders:
+
+```
+.
+├── firmware/                # planned
+│   ├── learning/            # intentionally weak PIN check (teaching version)
+│   └── hardened/            # constant-time PIN check (fixed version)
+├── hardware/                # planned: wiring diagram, bill of materials, enclosure files
+├── measurements/            # planned: timing data + plots comparing the two versions
+├── tools/
+│   └── emulator/            # desktop emulator of the lock (no hardware needed)
+├── docs/                    # photos, video links, slides, notes
+└── README.md
 ```
 
-Výsledok: priečinok `ST-042-MojeMeno/` obsahuje celý obsah šablóny, ale ako
-**nový, samostatný git repozitár s jedným commitom** — žiadna história
-šablóny sa neprenáša.
+Course template (STHDF knowledge system):
 
-> Skript, ktorý spraví presne toto isté jedným príkazom, je v
-> [`tools/clone-student-template.sh`](tools/clone-student-template.sh):
-> `./clone-student-template.sh ST-042-MojeMeno`
-
-### Pomenovanie priečinka
-
-- **Individuálna práca:** `ST-XXX-MojeMeno` (napr. `ST-042-JanNovak`)
-- **Tímový projekt:** `PRJ-YYY-NazovProjektu` (napr. `PRJ-017-SmartClock`)
-
-Toto pomenovanie (`ST-XXX` / `PRJ-YYY`) sa používa aj neskôr, keď budeš svoje
-výstupy publikovať do triedneho repozitára — drž sa ho od začiatku.
-
-## 3. Založ si vlastný repozitár na GitHube
-
-1. Na [github.com/new](https://github.com/new) si založ **prázdny** repozitár
-   (bez README, bez `.gitignore` — tie už máš z klonu).
-2. Pripoj ho ako remote a pushni:
-
-```bash
-git remote add origin <URL-tvojho-noveho-repozitara>
-git branch -M main
-git push -u origin main
+```
+├── content/docs/sk/         # course content, incl. sthdf/<PRJ-folder>/students/ (the 7 mandatory sections)
+├── core/                    # shared tooling and automation (Makefile targets, generators)
+├── config/                  # per-methodology configuration
+├── mk/, Makefile*           # make targets (run `make help`)
+├── publishing/docusaurus/   # Docusaurus site for publishing the content
+└── .github/                 # CI workflows from the template
 ```
 
-Odteraz pracuješ vo svojom vlastnom repozitári, nezávisle od šablóny.
+*(Planned folders are added as each part lands — see the commit history and `docs/` for progress.)*
 
-> **Žiadny osobitný "školský server" neexistuje.** Repozitár z kroku 3 je
-> obyčajný osobný GitHub účet — nič iné netreba zakladať. Ak GitHub účet
-> ešte nemáš, založ si ho zadarmo na [github.com/join](https://github.com/join).
+---
 
-## 4. Vytvor si svojich 7 povinných sekcií
+## Hardware
 
-Klon zatiaľ neobsahuje hotové súbory na vyplnenie — vytvoríš si ich
-jedným príkazom:
+| Part | Approx. price |
+|------|---------------|
+| ESP32 dev board | €5–8 |
+| 4×4 membrane keypad | €1–2 |
+| SG90 micro servo | €2–3 |
+| LEDs, resistors, jumper wires, breadboard | €3–5 |
+| Buzzer | ~€1 |
+| **Total** | **~€25-30** |
+
+Enclosure is 3D-printed or laser-cut in the faculty FabLab.
+
+---
+
+## Emulator (run it without hardware)
+
+Before the parts arrive, the whole concept can be explored in software. The emulator reproduces the lock's PIN-check behaviour on a PC, so the timing difference can be studied and the measurement/analysis tooling can be developed in parallel with the hardware.
 
 ```bash
-make S31-sthdf-new STHDF_NAME=ST-042-MojeMeno STHDF_TITLE="ST-042 Moje Meno" LOCALE=sk
+cd tools/emulator
+python emulator.py
 ```
 
-Výsledok: `content/docs/sk/sthdf/ST-042-MojeMeno/students/` — priečinok
-so 7 sekciami (About Me, Knowledge Contribution, Project Summary,
-Project Outcomes, Pitch Presentation, Final Presentation, Reflexia),
-každá ako samostatný podpriečinok s `index.md` na vyplnenie. Začni od
-`students/index.md` — je to rozcestník s checklistom.
+See `tools/emulator/README.md` for options.
 
-> `STHDF_NAME` použi rovnaké ako názov priečinka z kroku 2 (`ST-XXX-...`
-> / `PRJ-YYY-...`).
+---
 
-## 5. Tvoj výstup a triedny repozitár
+## Course documentation (STHDF)
 
-Tento predmet nepoužíva GitHub Classroom sync — tvoj repozitár je od
-šablóny aj od triedneho repozitára úplne nezávislý a **taký aj
-zostáva**. Prenos do triedneho dashboardu (`students/ST0XX/`) rieši
-vyučujúci na svojej strane — nie je to tvoja úloha.
+The mandatory course sections (About Me, Knowledge Contribution, Project Summary, Project Outcomes, Pitch Presentation, Final Presentation, Reflexia) live under `content/docs/sk/sthdf/<PRJ-folder>/students/`. Start from `students/index.md`, which holds the checklist.
 
-Tvoja jediná úloha:
-1. Vyplň si vo vlastnom repozitári všetkých 7 sekcií z kroku 4.
-2. Zisti si svoje pridelené číslo `ST0XX` (roster u vyučujúceho).
-3. Zdieľaj odkaz na svoj hotový repozitár tam, kde ti povie vyučujúci.
+Useful commands (from the repository root):
 
-Podrobnejšie vysvetlenie (aj prečo takto a nie inak) je v
-[K000119 – Ako si vytvoriť čistý klon triedneho repozitára](https://knifes.systemthinking.sk/sk/knifes/K000119-klon-triedneho-repozitara)
-(krok 6).
+```bash
+make help
+```
 
-## 6. Čo je vnútri
+---
 
-| Priečinok | Obsah |
-|---|---|
-| `content/docs/sk/` (`en/`) | tvoj obsah — 7Ds, SDLC, Q12, STHDF, KNIFE |
-| `core/` | zdieľané nástroje a automatizácia (Makefile targets, generátory) |
-| `config/` | konfigurácia jednotlivých metodík |
-| `publishing/docusaurus/` | Docusaurus stránka, ak si obsah chceš publikovať |
+## Team
 
-Rýchly prehľad dostupných príkazov: `make help`
+| Role | Person |
+|------|--------|
+| Firmware & security | Nazar Bohach (ST-003) — [devNazarBohach](https://github.com/devNazarBohach) |
+| Fabrication / enclosure | Mykola Malesh (ST-028) [MykolaMalesh](https://github.com/shot0071) |
+| Documentation, 7Ds & diagrams | Viktor Hutsuliak (ST-005) — [Vtoshik](https://github.com/Vtoshik) |
 
-## 7. Odkazy
+---
 
-- 🧭 Portál predmetu: [sthdf.systemthinking.sk](https://sthdf.systemthinking.sk)
-- 📚 KNIFE dokumentácia: [knifes.systemthinking.sk](https://knifes.systemthinking.sk)
+## Status
+
+Active — course project, autumn semester 2026/2027. See the commit history and `docs/` for weekly progress.
 
 ## License
 
-- **Kód a skripty**: [MIT License](./LICENSE)
-- **Vzdelávací obsah a dokumentácia** (`.md` súbory, metodiky, poznámky): [CC-BY 4.0 License](./LICENSE-DOCS)
+Educational project. Code under MIT (`LICENSE`), documentation under CC-BY 4.0 (`LICENSE-DOCS`, see course template), unless noted otherwise.
