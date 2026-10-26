@@ -81,6 +81,12 @@ See `tools/emulator/README.md` for options.
 
 ---
 
+## Design diagrams
+
+Architecture, deployment, attack sequence and state machine are in [docs/diagrams.md](docs/diagrams.md).
+
+---
+
 ## Course documentation (STHDF)
 
 The mandatory course sections (About Me, Knowledge Contribution, Project Summary, Project Outcomes, Pitch Presentation, Final Presentation, Reflexia) live under `content/docs/sk/sthdf/<PRJ-folder>/students/`. Start from `students/index.md`, which holds the checklist.
