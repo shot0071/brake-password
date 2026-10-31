@@ -107,10 +107,6 @@ const config: Config = {
       darkTheme: prismThemes.dracula,
     },
   },
-
-  future: {
-    experimental_faster: false, // disables experimental minifier causing build crashes
-  },
 };
 
 export default config;
