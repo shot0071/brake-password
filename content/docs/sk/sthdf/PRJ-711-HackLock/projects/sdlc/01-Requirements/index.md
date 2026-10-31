@@ -137,5 +137,13 @@ fm_reserved2: ""
 
 Zachytenie potrieb, cieľov a očakávaní používateľov. Pridaj user stories a nefunkčné požiadavky.
 
+## Prípady použitia
+![Prípady použitia](../03-Design/img/use-cases.png)
+
+## Požiadavky
+Požiadavky R1 až R8 a komponenty, ktoré ich pokrývajú (R8, detekcia automatického hádania pomocou ML, je plánovaná).
+
+![Požiadavky](../03-Design/img/requirements.png)
+
 ---
 **Navigation:** [⬆️ Up](../index.md) · [🏠 Home](../index.md)
