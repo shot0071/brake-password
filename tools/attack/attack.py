@@ -18,6 +18,7 @@
 #    python attack.py --target tcp:127.0.0.1:5555 recover --length 4
 #    python attack.py --target serial:COM5:115200 recover --length 4
 #    python attack.py --target tcp:127.0.0.1:5555 measure --out run.csv
+#    python attack.py --target tcp:127.0.0.1:5555 measure --secret 1379 --out run.csv
 # ============================================================
 
 import argparse
@@ -132,14 +133,21 @@ def recover(dev, length, digits, samples, filler):
 
 
 # ----------------------- measure --------------------------
-def measure(dev, length, samples, out, filler):
+def measure(dev, length, samples, out, filler, secret=None):
     """
     Collect raw timing for candidates with 0..length correct leading digits,
-    so plot.py can draw the 'staircase' that shows the leak. The correct PIN
-    is discovered first by recover(), then we build the test candidates from it.
+    so plot.py can draw the 'staircase' that shows the leak.
+
+    The test candidates are built from the correct PIN. Pass it with --secret
+    (required for the hardened firmware, where timing reveals nothing); without
+    it the PIN is first recovered from timing, which only works on the
+    vulnerable firmware.
     """
-    secret = recover(dev, length, "0123456789", max(samples // 3, 5), filler)
-    print(f"\nMeasuring timing vs correct-prefix length into {out} ...")
+    if secret is None:
+        secret = recover(dev, length, "0123456789", max(samples // 3, 5), filler)
+    else:
+        length = len(secret)
+    print(f"\nMeasuring timing vs correct-prefix length (PIN {secret}) into {out} ...")
 
     # Build one candidate per correct-prefix length 0..length.
     # correct prefix of k digits, then a deliberately wrong digit, then filler.
@@ -193,6 +201,8 @@ def main():
     pm.add_argument("--samples", type=int, default=40)
     pm.add_argument("--out", default="measurement.csv")
     pm.add_argument("--filler", default="0")
+    pm.add_argument("--secret", default=None,
+                    help="the correct PIN; required for the hardened firmware")
 
     args = ap.parse_args()
     dev = open_target(args.target)
@@ -200,7 +210,7 @@ def main():
         if args.cmd == "recover":
             recover(dev, args.length, args.digits, args.samples, args.filler)
         elif args.cmd == "measure":
-            measure(dev, args.length, args.samples, args.out, args.filler)
+            measure(dev, args.length, args.samples, args.out, args.filler, args.secret)
     finally:
         dev.close()
 

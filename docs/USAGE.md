@@ -36,8 +36,8 @@ pip install -r requirements.txt          # first time only
 
 # with the emulator running in --mode vulnerable:
 python attack.py --target tcp:127.0.0.1:5555 measure --out ../../measurements/vulnerable.csv
-# restart emulator in --mode hardened, then:
-python attack.py --target tcp:127.0.0.1:5555 measure --out ../../measurements/hardened.csv
+# restart emulator in --mode hardened, then (give the PIN: timing no longer reveals it):
+python attack.py --target tcp:127.0.0.1:5555 measure --secret 1379 --out ../../measurements/hardened.csv
 
 python plot.py ../../measurements/vulnerable.csv ../../measurements/hardened.csv \
        --labels vulnerable hardened --out ../../measurements/leak.png
