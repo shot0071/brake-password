@@ -92,6 +92,14 @@ You can also drive the board by hand with the live demo (same `--target`):
 python live.py --target serial:COM5:115200
 ```
 
+**Live physical demo.** Flash the board, then run the read-only monitor:
+```bash
+python tools/attack/monitor.py --target serial:COM3:115200
+```
+Now type PINs on the physical keypad and press `#` — the terminal shows the
+PIN-check (compare) time for each attempt as a number and a `#` bar, so the
+leak is visible as you type. The monitor only reads the port; it never sends.
+
 Then re-flash with `#define VULNERABLE 0` and run the attack again to show it
 fails against the hardened firmware. Use `measure` + `plot.py` exactly as in
 section A to get the before/after plot from the real board.

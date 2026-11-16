@@ -120,14 +120,19 @@ void handleAttempt(const char* candidate) {
   // would both pass (the check only looks at the first PIN_LEN digits).
   // The length is attacker-chosen, not secret, so this guard leaks nothing.
   bool lenOk = (strlen(candidate) == (size_t)PIN_LEN);
-#if VULNERABLE
+  uint32_t t0 = micros();                         // measure the PIN-check itself
   bool ok = lenOk && checkPin(candidate);
-#else
-  uint32_t start = micros();
-  bool ok = lenOk && checkPin(candidate);
-  while ((uint32_t)(micros() - start) < RESP_US) { /* constant duration */ }
+  uint32_t dt = (uint32_t)(micros() - t0);        // PIN-check duration, microseconds
+#if !VULNERABLE
+  while ((uint32_t)(micros() - t0) < RESP_US) { /* constant duration */ }
 #endif
   if (ok) openLock(); else denyLock();
+  // Extra, easy-to-parse summary after OK/NO (one line, "RESULT <OK|NO> <us>").
+  // The OK/NO line above is left untouched, so attack.py and live.py are unaffected.
+  Serial.print("RESULT ");
+  Serial.print(ok ? "OK" : "NO");
+  Serial.print(' ');
+  Serial.println(dt);
 }
 
 // ----------------------- SETUP / LOOP -----------------
