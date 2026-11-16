@@ -1,0 +1,9 @@
+Recovering a 4-digit PIN  (digits=0123456789, 15 samples/try)
+
+  position 1: '1'  (  4078.5 us, +1154.0 us over 2nd)   prefix=1
+  position 2: '3'  (  5937.4 us, +1855.3 us over 2nd)   prefix=13
+  position 3: '7'  (  7325.6 us, +1382.5 us over 2nd)   prefix=137
+  position 4: '9'  ( 38893.3 us, +31188.2 us over 2nd)   prefix=1379
+
+Recovered PIN candidate: 1379
+Verification: TRY 1379 -> OK  (correct)

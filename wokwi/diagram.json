@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "author": "HackLock team",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0, "attrs": {} },
+    { "type": "wokwi-membrane-keypad", "id": "kpd", "top": -200, "left": 180, "attrs": {} },
+    { "type": "wokwi-servo", "id": "servo", "top": 150, "left": 200, "attrs": {} },
+    { "type": "wokwi-led", "id": "ledR", "top": -40, "left": -120, "attrs": { "color": "red" } },
+    { "type": "wokwi-led", "id": "ledG", "top": 40, "left": -120, "attrs": { "color": "green" } },
+    { "type": "wokwi-resistor", "id": "rR", "top": -40, "left": -220, "attrs": { "value": "220" } },
+    { "type": "wokwi-resistor", "id": "rG", "top": 40, "left": -220, "attrs": { "value": "220" } },
+    { "type": "wokwi-buzzer", "id": "bz", "top": 150, "left": -120, "attrs": { "volume": "0.1" } }
+  ],
+  "connections": [
+    [ "kpd:R1", "esp:13", "green", [] ],
+    [ "kpd:R2", "esp:14", "green", [] ],
+    [ "kpd:R3", "esp:27", "green", [] ],
+    [ "kpd:R4", "esp:26", "green", [] ],
+    [ "kpd:C1", "esp:25", "blue", [] ],
+    [ "kpd:C2", "esp:33", "blue", [] ],
+    [ "kpd:C3", "esp:32", "blue", [] ],
+    [ "kpd:C4", "esp:23", "blue", [] ],
+
+    [ "servo:PWM", "esp:18", "orange", [] ],
+    [ "servo:V+",  "esp:5V", "red", [] ],
+    [ "servo:GND", "esp:GND.1", "black", [] ],
+
+    [ "esp:21", "rR:1", "magenta", [] ],
+    [ "rR:2", "ledR:A", "magenta", [] ],
+    [ "ledR:C", "esp:GND.2", "black", [] ],
+
+    [ "esp:19", "rG:1", "green", [] ],
+    [ "rG:2", "ledG:A", "green", [] ],
+    [ "ledG:C", "esp:GND.2", "black", [] ],
+
+    [ "esp:5", "bz:1", "purple", [] ],
+    [ "bz:2", "esp:GND.3", "black", [] ]
+  ],
+  "dependencies": {}
+}

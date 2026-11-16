@@ -1,0 +1,19 @@
+Recovering a 4-digit PIN  (digits=0123456789, 6 samples/try)
+
+  position 1: '1'  (  4810.5 us, +1427.5 us over 2nd)   prefix=1
+  position 2: '3'  (  5926.0 us, +1845.0 us over 2nd)   prefix=13
+  position 3: '7'  (  7070.8 us, +1115.1 us over 2nd)   prefix=137
+  position 4: '9'  ( 34305.3 us, +26343.3 us over 2nd)   prefix=1379
+
+Recovered PIN candidate: 1379
+Verification: TRY 1379 -> OK  (correct)
+
+Measuring timing vs correct-prefix length (PIN 1379) into measurements/board-vulnerable.csv ...
+wrote 100 rows
+
+  correct_prefix   median_us
+         0            2921.2
+         1            4066.1
+         2            5927.6
+         3            7062.2
+         4           39189.4
