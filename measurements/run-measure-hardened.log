@@ -1,0 +1,10 @@
+
+Measuring timing vs correct-prefix length (PIN 1379) into measurements/board-hardened.csv ...
+wrote 100 rows
+
+  correct_prefix   median_us
+         0           10788.0
+         1           10792.5
+         2           10376.8
+         3           10344.7
+         4           38888.4
