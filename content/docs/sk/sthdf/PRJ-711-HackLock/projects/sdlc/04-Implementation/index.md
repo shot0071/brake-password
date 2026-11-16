@@ -137,5 +137,10 @@ fm_reserved2: ""
 
 Realizácia návrhu – kód, konfigurácia, pipeline.
 
+## Zapojenie na doske
+Zámok zapojený na nepájivom poli: ESP32, klávesnica 4x4, servo SG90 a červená LED s odporom. Zapojenie je popísané v [docs/WIRING.md](https://github.com/shot0071/brake-password/blob/main/docs/WIRING.md). Kryt ešte nie je hotový.
+
+![HackLock zapojený na nepájivom poli](./img/breadboard.jpg)
+
 ---
 **Navigation:** [⬆️ Up](../index.md) · [🏠 Home](../index.md)

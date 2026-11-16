@@ -137,5 +137,22 @@ fm_reserved2: ""
 
 Zhrnutie výsledkov testovania (reporty, screenshoty, metriky).
 
+## Meranie času odozvy na reálnej doske
+Na ESP32 sme porovnali slabý firmvér (`VULNERABLE 1`) a zabezpečený firmvér (`VULNERABLE 0`), 20 vzoriek na kandidáta. Tajný PIN `1379` sa z časov odozvy podarilo získať na slabom firmvéri a nie na zabezpečenom.
+
+| správne cifry na začiatku | slabý firmvér (µs) | zabezpečený firmvér (µs) |
+|---:|---:|---:|
+| 0 | 2 921 | 10 788 |
+| 1 | 4 066 | 10 793 |
+| 2 | 5 928 | 10 377 |
+| 3 | 7 062 | 10 345 |
+| 4 (celý PIN) | 39 189 | 38 888 |
+
+Slabý firmvér ukazuje rastúce schody (približne 1,1–1,9 ms na každú správnu cifru), zabezpečený je pri 0–3 správnych cifrách rovný. Skok pri 4 správnych cifrách je pri oboch rovnaký a je pravdepodobne dôsledok fyzického otvorenia zámku (servo, LED), nie porovnávania PIN.
+
+![Čas odozvy podľa počtu správnych cifier](./img/board-leak.png)
+
+Podrobný rozbor je v `measurements/RESULTS.md` v koreni repozitára.
+
 ---
 **Navigation:** [⬆️ Up](./index.md) · [🏠 Home](../index.md)

@@ -4,6 +4,12 @@ Everything plugs into a breadboard with jumper (Dupont) wires. No soldering is
 needed if your ESP32 comes with its pin headers already attached and your
 keypad has the usual 8-pin connector.
 
+## Photo
+
+The lock wired up on a breadboard: ESP32, 4x4 keypad, SG90 servo and a red LED with a resistor. The enclosure is not built yet.
+
+![HackLock wired on a breadboard](img/breadboard.jpg)
+
 ## Parts
 
 | Part | Notes | Approx. price |
