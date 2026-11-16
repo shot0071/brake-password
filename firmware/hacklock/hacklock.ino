@@ -24,7 +24,7 @@
 #include <ESP32Servo.h>
 
 // ----------------------- CONFIG -----------------------
-#define VULNERABLE 0                 // 1 = leaky (learning), 0 = constant-time (hardened)
+#define VULNERABLE 1                 // 1 = leaky (learning), 0 = constant-time (hardened)
 
 const char*    SECRET  = "1379";     // test PIN (change freely)
 const int      PIN_LEN = 4;          // PIN length
