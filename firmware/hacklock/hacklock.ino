@@ -34,14 +34,18 @@ const uint32_t RESP_US = 8000;       // fixed total answer time, HARDENED only (
 // ----------------------- PINS -------------------------
 // Keypad 4x4
 const byte ROWS = 4, COLS = 4;
+// NOTE: this keymap is adapted to our physical keypad, whose rows and
+// columns are swapped and reversed versus the usual pinout. We mapped every
+// key (press -> printed char) and rewrote the array so the labels match.
+// For a standard keypad use the plain layout: row0 {'1','2','3','A'}, etc.
 char keys[ROWS][COLS] = {
-  {'1','2','3','A'},
-  {'4','5','6','B'},
-  {'7','8','9','C'},
-  {'*','0','#','D'}
+  {'D','C','B','A'},
+  {'#','9','6','3'},
+  {'0','8','5','2'},
+  {'*','7','4','1'}
 };
-byte rowPins[ROWS] = {13, 14, 27, 26};   // keypad rows  R1..R4
-byte colPins[COLS] = {25, 33, 32, 23};   // keypad cols  C1..C4
+byte rowPins[ROWS] = {13, 14, 27, 26};   // keypad rows
+byte colPins[COLS] = {25, 33, 32, 23};   // keypad cols
 Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, ROWS, COLS);
 
 const int SERVO_PIN = 18;    // servo signal
@@ -74,29 +78,39 @@ bool checkPin(const char* input) {
 }
 
 // ----------------------- OUTPUTS ----------------------
-void beep(int ms) {
+// Feedback (LEDs, buzzer, servo) is NON-BLOCKING: each output is switched on
+// here and switched off later in loop() by serviceOutputs(). This keeps the
+// device reading the next command immediately, so the attack tool measures
+// the PIN-check time cleanly, without the 350ms/1.5s delays leaking in.
+uint32_t redOffAt = 0, greenOffAt = 0, buzzOffAt = 0, servoCloseAt = 0;
+
+void beepStart(int ms) {
   if (BUZZER < 0) return;
   digitalWrite(BUZZER, HIGH);
-  delay(ms);
-  digitalWrite(BUZZER, LOW);
+  buzzOffAt = millis() + ms;
+}
+
+void serviceOutputs() {
+  uint32_t now = millis();
+  if (redOffAt   && now >= redOffAt)   { digitalWrite(LED_RED, LOW);   redOffAt   = 0; }
+  if (greenOffAt && now >= greenOffAt) { digitalWrite(LED_GREEN, LOW); greenOffAt = 0; }
+  if (buzzOffAt  && now >= buzzOffAt)  { digitalWrite(BUZZER, LOW);    buzzOffAt  = 0; }
+  if (servoCloseAt && now >= servoCloseAt) { lockServo.write(0);       servoCloseAt = 0; }
 }
 
 void openLock() {
   Serial.println("OK");                 // print the answer FIRST (so timing is clean)
-  if (LED_GREEN >= 0) digitalWrite(LED_GREEN, HIGH);
-  beep(80);
+  if (LED_GREEN >= 0) { digitalWrite(LED_GREEN, HIGH); greenOffAt = millis() + 1500; }
+  beepStart(80);
   lockServo.write(90);                  // open the lid
-  delay(1500);
-  lockServo.write(0);                   // close it again
-  if (LED_GREEN >= 0) digitalWrite(LED_GREEN, LOW);
+  servoCloseAt = millis() + 1500;       // close it again later (non-blocking)
 }
 
 void denyLock() {
   Serial.println("NO");                 // print the answer FIRST
   digitalWrite(LED_RED, HIGH);
-  beep(150);
-  delay(200);
-  digitalWrite(LED_RED, LOW);
+  beepStart(150);
+  redOffAt = millis() + 200;            // turn the LED off later (non-blocking)
 }
 
 // Run one attempt. In HARDENED mode the whole attempt is padded to a
@@ -138,6 +152,8 @@ void setup() {
 }
 
 void loop() {
+  serviceOutputs();   // turn off LEDs / buzzer / servo when their time is up
+
   // 1) Keypad (a human typing)
   char k = keypad.getKey();
   if (k) {
