@@ -22,6 +22,15 @@ python attack.py --target tcp:127.0.0.1:5555 recover --length 4
 ```
 You should see it recover the PIN digit by digit and end with `-> OK`.
 
+**See the timing by hand (optional).** Instead of the automatic attack you can
+type PINs yourself and watch the response time and a proportional `#` bar:
+```bash
+python live.py --target tcp:127.0.0.1:5555
+```
+Try `0000`, then `1000`, `1370`, `1379`: on the leaky firmware each extra
+correct leading digit makes the answer slower, so the bar grows longer. On the
+hardened firmware the bar stays the same length whatever you type.
+
 **Now prove the fix.** Stop the emulator (Ctrl+C) and restart it hardened:
 ```bash
 python emulator.py --mode hardened
@@ -77,6 +86,11 @@ python attack.py --target serial:COM5:115200 recover --length 4
 python attack.py --target serial:/dev/ttyUSB0:115200 recover --length 4
 ```
 Replace `COM5` / `/dev/ttyUSB0` with your actual port (shown in the Arduino IDE).
+
+You can also drive the board by hand with the live demo (same `--target`):
+```bash
+python live.py --target serial:COM5:115200
+```
 
 Then re-flash with `#define VULNERABLE 0` and run the attack again to show it
 fails against the hardened firmware. Use `measure` + `plot.py` exactly as in

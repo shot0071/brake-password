@@ -32,7 +32,10 @@ Median response time (microseconds) from `measure --samples 20`, by number of co
   roughly 1.1–1.9 ms per additional correct digit — consistent with the firmware's
   `LEAK_US = 1500` constant and with the margins seen during PIN recovery.
 - **Hardened firmware**: flat across prefixes 0–3 (spread ≈ 450 µs, well inside normal
-  jitter), no staircase — the constant-time comparison removes the leak.
+  jitter), no staircase — the constant-time comparison removes the leak. The flat level
+  sits near 10.4 ms: the firmware pads every answer to a fixed floor of `RESP_US = 8000 µs`
+  (8 ms), and the remaining ~2.4 ms is the USB/serial round-trip that is also present in the
+  vulnerable numbers.
 - **Prefix 4 (full PIN, both firmwares)**: both lines jump to ~39 ms. This is **not** part
   of the character-comparison leak. In `hacklock.ino`, `Serial.println("OK")` is sent
   before the servo/LED actions, and those actions are written as non-blocking — but in
